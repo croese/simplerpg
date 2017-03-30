@@ -34,6 +34,10 @@ func NewEntityManager() *EntityManager {
 	return &EntityManager{entities: make(map[string]Entity)}
 }
 
+func (em *EntityManager) Count() int {
+	return len(em.entities)
+}
+
 // LoadItemsJSON reads data to populate Items
 // from the JSON in r
 func (em *EntityManager) LoadItemsJSON(r io.Reader) error {
