@@ -22,6 +22,16 @@ type Item struct {
 // Id returns the entity ID
 func (i *Item) Id() string { return i.id }
 
+type Armor struct {
+	Item
+	Defense int
+}
+
+type Weapon struct {
+	Item
+	Damage int
+}
+
 // EntityManager manages entities used
 // by the game engine
 type EntityManager struct {
@@ -56,6 +66,64 @@ func (em *EntityManager) LoadItemsJSON(r io.Reader) error {
 		em.entities[k] = &Item{
 			Name:        v["name"],
 			Description: v["description"],
+		}
+	}
+
+	return err
+}
+
+func (em *EntityManager) LoadArmorJSON(r io.Reader) error {
+	b, err := ioutil.ReadAll(r)
+	if err != nil {
+		return err
+	}
+
+	m := map[string]struct {
+		Name        string `json:"name"`
+		Description string `json:"description"`
+		Defense     int    `json:"defense"`
+	}{}
+	err = json.Unmarshal(b, &m)
+	if err != nil {
+		return err
+	}
+
+	for k, v := range m {
+		em.entities[k] = &Armor{
+			Item: Item{
+				Name:        v.Name,
+				Description: v.Description,
+			},
+			Defense: v.Defense,
+		}
+	}
+
+	return err
+}
+
+func (em *EntityManager) LoadWeaponJSON(r io.Reader) error {
+	b, err := ioutil.ReadAll(r)
+	if err != nil {
+		return err
+	}
+
+	m := map[string]struct {
+		Name        string `json:"name"`
+		Description string `json:"description"`
+		Damage      int    `json:"damage"`
+	}{}
+	err = json.Unmarshal(b, &m)
+	if err != nil {
+		return err
+	}
+
+	for k, v := range m {
+		em.entities[k] = &Weapon{
+			Item: Item{
+				Name:        v.Name,
+				Description: v.Description,
+			},
+			Damage: v.Damage,
 		}
 	}
 
